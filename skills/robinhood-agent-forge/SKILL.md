@@ -1,85 +1,42 @@
 ---
 name: robinhood-agent-forge
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+description: Register, mint, inspect, and deploy AI agent identities and tokens on either Robinhood Chain (EVM/ERC-8004) or Solana (SVM/Metaplex) through Cheshire Terminal and the open-source robinhood-agents SDK. Use for chain selection, agent metadata, unsigned intents, wallet-confirmed registration, registry deployment, discovery, reputation, validation, or testnet-to-mainnet release workflows.
 ---
 
 # Robinhood Agent Forge
 
-## Overview
+Offer `Robinhood Chain` and `Solana` as explicit choices before any write. Use the shared lifecycle: prepare, review, wallet-authorize, submit, confirm, inspect.
 
-[TODO: 1-2 sentences explaining what this skill enables]
+## Choose the platform
 
-## Structuring This Skill
+- Choose Robinhood Chain for an EVM ERC-721 identity with ERC-8004 identity, reputation, and validation registries. Default to testnet chain `46630`; mainnet is `4663`.
+- Choose Solana for a Metaplex Core agent asset and Agent Identity registration. Default to devnet for testing and mainnet-beta only after explicit confirmation.
+- Do not imply that one token exists on both chains. Treat each registration as a distinct chain-scoped identity and link them in metadata only when ownership has been verified on both.
 
-[TODO: Choose the structure that best fits this skill's purpose. Common patterns:
+Read [references/api.md](references/api.md) for exact site endpoints and request shapes.
 
-**1. Workflow-Based** (best for sequential processes)
-- Works well when there are clear step-by-step procedures
-- Example: DOCX skill with "Workflow Decision Tree" -> "Reading" -> "Creating" -> "Editing"
-- Structure: ## Overview -> ## Workflow Decision Tree -> ## Step 1 -> ## Step 2...
+## Register or mint
 
-**2. Task-Based** (best for tool collections)
-- Works well when the skill offers different operations/capabilities
-- Example: PDF skill with "Quick Start" -> "Merge PDFs" -> "Split PDFs" -> "Extract Text"
-- Structure: ## Overview -> ## Quick Start -> ## Task Category 1 -> ## Task Category 2...
+1. Validate the selected platform and network.
+2. Collect name, description, image, services, and capabilities. Prefer immutable `ipfs://` metadata in production.
+3. Fetch platform capability/configuration status from the site.
+4. Prepare the platform-specific action.
+5. Show the user the network, target program or contract, decoded action, fees/value, and metadata URI.
+6. Require explicit wallet authorization immediately before a live write.
+7. Submit with the matching wallet: EVM wallet for Robinhood, Solana wallet for Solana.
+8. Verify the receipt/signature against the selected chain, then inspect canonical state.
 
-**3. Reference/Guidelines** (best for standards or specifications)
-- Works well for brand guidelines, coding standards, or requirements
-- Example: Brand styling with "Brand Guidelines" -> "Colors" -> "Typography" -> "Features"
-- Structure: ## Overview -> ## Guidelines -> ## Specifications -> ## Usage...
+Never request, store, print, or transmit a user private key or seed phrase. Do not silently switch platforms or networks.
 
-**4. Capabilities-Based** (best for integrated systems)
-- Works well when the skill provides multiple interrelated features
-- Example: Product Management with "Core Capabilities" -> numbered capability list
-- Structure: ## Overview -> ## Core Capabilities -> ### 1. Feature -> ### 2. Feature...
+## Deploy infrastructure
 
-Patterns can be mixed and matched as needed. Most skills combine patterns (e.g., start with task-based, add workflow for complex operations).
+Read [references/deployment.md](references/deployment.md). Robinhood registry deployment and end-user minting are separate operations. Simulate first, verify every deployed contract, and never invent a registry address. Solana uses the published Metaplex programs; verify program IDs and cluster before signing.
 
-Delete this entire "Structuring This Skill" section when done - it's just guidance.]
+## Guardrails
 
-## [TODO: Replace with the first main section based on chosen structure]
-
-[TODO: Add content here. See examples in existing skills:
-- Code samples for technical skills
-- Decision trees for complex workflows
-- Concrete examples with realistic user requests
-- References to scripts/templates/references as needed]
-
-## Resources (optional)
-
-Create only the resource directories this skill actually needs. Delete this section if no resources are required.
-
-### scripts/
-Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.
-
-**Examples from other skills:**
-- PDF skill: `fill_fillable_fields.py`, `extract_form_field_info.py` - utilities for PDF manipulation
-- DOCX skill: `document.py`, `utilities.py` - Python modules for document processing
-
-**Appropriate for:** Python scripts, shell scripts, or any executable code that performs automation, data processing, or specific operations.
-
-**Note:** Scripts may be executed without loading into context, but can still be read by Codex for patching or environment adjustments.
-
-### references/
-Documentation and reference material intended to be loaded into context to inform Codex's process and thinking.
-
-**Examples from other skills:**
-- Product management: `communication.md`, `context_building.md` - detailed workflow guides
-- BigQuery: API reference documentation and query examples
-- Finance: Schema documentation, company policies
-
-**Appropriate for:** In-depth documentation, API references, database schemas, comprehensive guides, or any detailed information that Codex should reference while working.
-
-### assets/
-Files not intended to be loaded into context, but rather used within the output Codex produces.
-
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
-
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
-
----
-
-**Not every skill requires all three types of resources.**
+- Keep RPC credentials and indexer keys server-side.
+- Treat EVM ERC-721 approval as transfer-capable authority.
+- Treat Solana update authority and delegates as consequential permissions.
+- Use direct chain reads as canonical; Blockscout and DAS are discovery/indexing layers.
+- Do not claim deployment, verification, registration, or finality without checking it.
+- Explain that agent identity tokens are not promises of investment value.
