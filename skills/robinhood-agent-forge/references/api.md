@@ -15,8 +15,8 @@ Inspect with `GET /api/robinhood/agents/:agentId?chainId=46630`. Discover mainne
 
 ## Solana (SVM)
 
-Call `POST /api/metaplex-agents/mint` to create a Metaplex Core agent asset and register its Agent Identity. Supply the connected owner wallet plus agent fields used by the site. Call `POST /api/metaplex-agents/register` with `assetAddress` and registration metadata to register an existing Core asset.
+Call `POST /api/metaplex-agents/mint` to create a Metaplex Core agent asset and register its Agent Identity. Supply `ownerPubkey`, a fresh `CLAWD_AGENT_MINT_V2` `walletMessage`, its base64 `walletSignature`, and the agent fields used by the site.
 
 Inspect with `GET /api/metaplex-agents/fetch/:assetAddress`.
 
-The current Cheshire Solana path may be treasury-sponsored and server-submitted after wallet-authenticated authorization. Present sponsorship, asset ownership, update authority, freeze/delegate policy, and the returned signature to the user. Do not describe it as an unsigned client transaction when it is not.
+The current Cheshire Solana path may be treasury-sponsored and server-submitted after wallet-authenticated authorization. The user wallet owns the Core asset, while the sponsoring treasury remains update authority and the asset is created frozen under the route's permanent-freeze policy. Present sponsorship, ownership, update authority, freeze/delegate policy, and the returned signature. Do not describe it as an unsigned client transaction. `POST /api/metaplex-agents/register`, `/delegate`, and `/set-token` are operator-only server-signer routes and must not be offered to normal users.
