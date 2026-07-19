@@ -1,0 +1,140 @@
+# Open-source SDK and CLI
+
+- Repository: `https://github.com/Solizardking/robinhood-agents`
+- Package name: `@cheshire-terminal/robinhood-agents`
+- Release: `v0.1.0`
+- Runtime: Node.js 18 or newer, ESM-only
+
+Install the immutable GitHub release:
+
+```bash
+npm install "github:Solizardking/robinhood-agents#v0.1.0"
+```
+
+If verifying from source, clone the repository, check out `v0.1.0`, inspect `git rev-parse HEAD`, then run `npm install` and `npm run check`. Do not substitute an unreviewed branch. The package name is reserved in `package.json`; do not assume a public npm release exists unless `npm view @cheshire-terminal/robinhood-agents@0.1.0` succeeds.
+
+## Exact imports
+
+```js
+import {
+  SPONSORED_MINT_AUTHORIZATION_MAX_AGE_MS,
+  SPONSORED_MINT_AUTHORIZATION_MAX_FUTURE_SKEW_MS,
+  SPONSORED_MINT_AUTHORIZATION_VERSION,
+  assertCanonicalRuntimeCode,
+  assertSponsoredMintAuthorization,
+  buildRegistration,
+  buildSponsoredMintAuthorization,
+  canonicalDeployments,
+  createAgentForge,
+  createCheshireClient,
+  frameworkCapabilities,
+  getCanonicalContract,
+  getCanonicalDeployment,
+  identityRegistryAbi,
+  inspectCanonicalRuntimeCode,
+  normalizeSponsoredMintIntent,
+  platforms,
+  prepareCanonicalEvmRegistration,
+  prepareEvmRegistration,
+  registrationDataUri,
+  sponsoredMintIntentSha256,
+} from "@cheshire-terminal/robinhood-agents";
+```
+
+The package currently ships named JavaScript exports without bundled TypeScript declarations.
+
+## Local EVM preparation
+
+Use `prepareCanonicalEvmRegistration()` to select the reviewed manifest address, validate metadata, and encode `register(agentURI)` locally. Use `prepareEvmRegistration()` only when deliberately supplying another independently verified identity registry. Neither function contacts Cheshire, connects a wallet, simulates, or broadcasts.
+
+```js
+import { prepareCanonicalEvmRegistration } from "@cheshire-terminal/robinhood-agents";
+
+const intent = prepareCanonicalEvmRegistration({
+  chainId: 46630,
+  name: "Research Agent",
+  description: "Publishes verifiable research.",
+  image: "ipfs://bafy...",
+  services: [{ name: "MCP", endpoint: "https://example.com/mcp" }],
+});
+```
+
+Verify `intent.vm === "evm"`, `intent.canonicalRegistry === true`, chain ID, destination, expected runtime hash and byte length, zero value, decoded calldata, and URI before handing it to a wallet. Fetch `eth_getCode` from the selected chain and pass it to `assertCanonicalRuntimeCode({ chainId, contract: "identity", runtimeCode })` before submission.
+
+## Hosted client
+
+```js
+import { createAgentForge } from "@cheshire-terminal/robinhood-agents";
+
+const forge = createAgentForge({ baseUrl: "https://cheshireterminal.ai" });
+const status = await forge.capabilities();
+const evmIntent = await forge.prepareRobinhood(input);
+const identity = await forge.inspect({ platform: "robinhood", id: "1", chainId: 46630 });
+```
+
+Available operations:
+
+- `capabilities()` fetches both Robinhood configuration and Solana health.
+- `prepareRobinhood(input)` requests unsigned hosted EVM calldata.
+- `prepareLocalRobinhood(input)` prepares against the committed identity-registry manifest without a network call.
+- `mintSolana(input)` performs a live hosted Solana write using an already fresh, wallet-signed `CLAWD_AGENT_MINT_V2` intent.
+- `inspect({ platform, id, chainId })` reads a Robinhood identity or Solana asset.
+
+`prepare({ platform: "solana" })` deliberately rejects because the Solana route is not an unsigned preparation operation.
+
+## Build and verify the Solana authorization
+
+The SDK constructs and locally verifies the canonical message, but it never invokes a wallet or submits from `buildSponsoredMintAuthorization()`:
+
+```js
+import {
+  assertSponsoredMintAuthorization,
+  buildSponsoredMintAuthorization,
+  createAgentForge,
+} from "@cheshire-terminal/robinhood-agents";
+
+const source = {
+  ownerPubkey: "BASE58_OWNER",
+  name: "Research Agent",
+  symbol: "AGENT",
+  description: "Publishes verifiable research.",
+  agentType: "research",
+  personality: "careful",
+  capabilities: ["research"],
+  imageUri: "ipfs://bafy...",
+  customRegistrationUri: "ipfs://bafy-registration...",
+};
+const authorization = buildSponsoredMintAuthorization(source);
+const signatureBytes = await wallet.signMessage(new TextEncoder().encode(authorization.message));
+const signed = {
+  ...source,
+  walletMessage: authorization.message,
+  walletSignature: Buffer.from(signatureBytes).toString("base64"),
+};
+
+assertSponsoredMintAuthorization(signed);
+await createAgentForge({ baseUrl: "https://cheshireterminal.ai" }).mintSolana(signed);
+```
+
+Use the Solana wallet adapter's actual `signMessage` operation for `wallet` above. Do not substitute a private key in application code. Re-fetch health and gate policy after constructing but before signing; rebuild when any reviewed field changes. `assertSponsoredMintAuthorization()` checks canonical structure, full-intent binding, timestamp bounds, base64 encoding, and the Ed25519 signature locally; the server still enforces the live holder gate and durable single-use replay claim.
+
+## CLI
+
+```bash
+npx robinhood-agents capabilities --site https://cheshireterminal.ai
+npx robinhood-agents deployments --chain 46630
+npx robinhood-agents prepare-local-robinhood --file registration.json --chain 46630
+npx robinhood-agents prepare-robinhood --file registration.json --site https://cheshireterminal.ai
+npx robinhood-agents inspect --platform robinhood --id 1 --chain 46630
+```
+
+`mint-solana` is a live write and requires both `--confirm-live-mint` and a JSON file containing `ownerPubkey`, `walletMessage`, and `walletSignature`. The CLI sends that signed authorization immediately; it provides no second wallet prompt and does not make a stale authorization safe.
+
+```bash
+npx robinhood-agents mint-solana \
+  --confirm-live-mint \
+  --file signed-mint.json \
+  --site https://cheshireterminal.ai
+```
+
+Use `CHESHIRE_SITE_URL` for the default site. `CHESHIRE_API_KEY`, when present, is sent as a bearer token. Never put a private key or seed phrase in a CLI file or environment variable.

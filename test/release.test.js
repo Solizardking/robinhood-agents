@@ -1,0 +1,110 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const monorepoRoot = path.resolve(packageRoot, "..");
+
+function source(relativePath, root = packageRoot) {
+  return readFileSync(path.join(root, relativePath), "utf8");
+}
+
+test("license contains the complete canonical MIT grant, notice, and warranty terms", () => {
+  const license = source("LICENSE");
+  assert.match(license, /subject to the following conditions/);
+  assert.match(license, /copyright notice and this permission notice shall be included/);
+  assert.match(license, /IN NO EVENT SHALL THE\s+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE/);
+});
+
+test("package exposes deployment pins and ships standalone Foundry tooling", () => {
+  const pkg = JSON.parse(source("package.json"));
+  assert.equal(pkg.license, "MIT");
+  assert.equal(pkg.publishConfig.access, "public");
+  assert.equal(pkg.exports["./deployments"], "./src/deployments.js");
+  for (const entry of ["deploy", "deployments", "foundry.toml", "remappings.txt"]) {
+    assert.ok(pkg.files.includes(entry), `${entry} must be included in npm files`);
+  }
+  for (const file of [
+    "foundry.toml",
+    "deploy/script/DeployCheshireAgentRegistries.s.sol",
+    "deploy/script/RobinhoodDeploymentSafety.s.sol",
+    "deploy/scripts/deploy-agent-registries.sh",
+    "deploy/scripts/deployment-safety.cjs",
+  ]) {
+    assert.ok(existsSync(path.join(packageRoot, file)), `${file} must exist`);
+  }
+});
+
+test("deployment entrypoint is fixed, dry-run by default, and blocks canonical rebroadcasts", () => {
+  const runner = source("deploy/scripts/deploy-agent-registries.sh");
+  assert.match(runner, /MODE="dry-run"/);
+  assert.match(runner, /only the optional --broadcast flag is accepted/);
+  assert.match(runner, /assertRegistryBroadcastAvailable/);
+  assert.match(runner, /node deploy\/scripts\/deployment-safety\.cjs/);
+  assert.doesNotMatch(runner, /eval|source .*\.env/);
+
+  const blocked = spawnSync("bash", [path.join(packageRoot, "deploy/scripts/deploy-agent-registries.sh"), "--broadcast"], {
+    cwd: packageRoot,
+    encoding: "utf8",
+    env: { PATH: process.env.PATH, EXPECTED_CHAIN_ID: "4663" },
+  });
+  assert.notEqual(blocked.status, 0);
+  assert.match(blocked.stderr, /already deployed|competing namespace/);
+  assert.doesNotMatch(blocked.stderr, /PRIVATE_KEY is required/);
+});
+
+test("standalone manifests and contracts do not drift from the operator source when tested in the monorepo", (t) => {
+  const operatorDeployments = path.join(monorepoRoot, "packages/robinhood-deploy/deployments");
+  if (!existsSync(operatorDeployments)) {
+    t.skip("operator source is not present in a standalone clone");
+    return;
+  }
+  for (const file of [
+    "agent-registries-mainnet-4663.json",
+    "agent-registries-testnet-46630.json",
+  ]) {
+    assert.equal(
+      source(`deployments/${file}`),
+      source(`packages/robinhood-deploy/deployments/${file}`, monorepoRoot),
+      `${file} drifted`,
+    );
+  }
+  for (const file of [
+    "CheshireAgentIdentityRegistry.sol",
+    "CheshireAgentReputationRegistry.sol",
+    "CheshireAgentValidationRegistry.sol",
+  ]) {
+    assert.equal(
+      source(`contracts/${file}`),
+      source(`packages/robinhood-deploy/src/${file}`, monorepoRoot),
+      `${file} drifted`,
+    );
+  }
+});
+
+test("CLI reads canonical deployments and rejects example placeholders without network access", () => {
+  const deployment = spawnSync(process.execPath, ["src/cli.js", "deployments", "--chain", "4663"], {
+    cwd: packageRoot,
+    encoding: "utf8",
+  });
+  assert.equal(deployment.status, 0, deployment.stderr);
+  assert.equal(JSON.parse(deployment.stdout).chainId, 4663);
+
+  const mint = spawnSync(process.execPath, [
+    "src/cli.js",
+    "mint-solana",
+    "--confirm-live-mint",
+    "--file",
+    "examples/solana-agent.json",
+    "--site",
+    "https://example.invalid",
+  ], {
+    cwd: packageRoot,
+    encoding: "utf8",
+  });
+  assert.notEqual(mint.status, 0);
+  assert.match(mint.stderr, /CLAWD_AGENT_MINT_V2/);
+});
