@@ -1,171 +1,215 @@
 <p align="center">
-  <img src="./assets/agent-forge.svg" alt="Animated Robinhood Agents dual-chain forge showing Robinhood Chain EVM and Solana SVM as separate identity rails" width="100%" />
+  <img src="./assets/cheshire-terminal-agents.svg" alt="Animated Cheshire Terminal Agents banner — dual-chain identity forge and production agent catalog" width="100%" />
 </p>
 
-# Robinhood Agents — EVM + SVM Agent Forge
+# Cheshire Terminal Agents
 
 <p align="center">
-  <strong>Choose where your agent identity lives.</strong><br/>
-  Prepare an ERC-8004-compatible identity on Robinhood Chain, or mint a Metaplex Core asset and attempt Agent Identity registration on Solana.
+  <strong>Catalog + forge. One package for agent prompts and on-chain identity.</strong><br/>
+  Ship Cheshire-schema agents, then register them on <em>either</em> Robinhood Chain (EVM / ERC-8004)
+  or Solana (SVM / Metaplex Core) through the Cheshire Terminal hub.
 </p>
 
 <p align="center">
-  <a href="https://cheshireterminal.ai/agents/forge"><img src="https://img.shields.io/badge/OPEN_AGENT_FORGE-75f58b?style=for-the-badge&labelColor=07140d" alt="Open Agent Forge"></a>
-  <img src="https://img.shields.io/badge/CHOOSE-EVM_%7C_SVM-e8ecff?style=for-the-badge&labelColor=11131a" alt="Choose EVM or SVM">
-  <a href="https://github.com/Solizardking/robinhood-agents/releases/tag/v0.1.0"><img src="https://img.shields.io/badge/RELEASE-v0.1.0-ff8ad8?style=for-the-badge&labelColor=1b0b18" alt="Release v0.1.0"></a>
+  <a href="https://cheshireterminal.ai/agents"><img src="https://img.shields.io/badge/OPEN_AGENT_HUB-75f58b?style=for-the-badge&labelColor=07140d" alt="Open Agent Hub"></a>
+  <a href="https://cheshireterminal.ai/agents/forge"><img src="https://img.shields.io/badge/OPEN_AGENT_FORGE-c084fc?style=for-the-badge&labelColor=12081f" alt="Open Agent Forge"></a>
+  <a href="https://www.npmjs.com/package/cheshire-terminal-agents"><img src="https://img.shields.io/badge/npm-cheshire--terminal--agents-ff8ad8?style=for-the-badge&labelColor=1b0b18" alt="npm package"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-9f8cff?style=for-the-badge&labelColor=100b1d" alt="MIT license"></a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node-%3E%3D18.18-5fa04e?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 18.18 or newer">
-  <img src="https://img.shields.io/badge/Robinhood_Chain-46630_%2F_4663-75f58b?style=flat-square" alt="Robinhood Chain testnet 46630 and mainnet 4663">
+  <img src="https://img.shields.io/badge/catalog-53_agents-75f58b?style=flat-square" alt="53 catalog agents">
+  <img src="https://img.shields.io/badge/Robinhood_Chain-46630_%2F_4663-75f58b?style=flat-square" alt="Robinhood Chain testnet and mainnet">
   <img src="https://img.shields.io/badge/Solana-mainnet--beta-9f8cff?style=flat-square&logo=solana&logoColor=white" alt="Solana mainnet-beta">
   <img src="https://img.shields.io/badge/ERC--8004_REGISTRIES-DEPLOYED-f5c36b?style=flat-square" alt="ERC-8004 registries deployed">
-  <a href="https://github.com/Solizardking/robinhood-agents/actions/workflows/ci.yml"><img src="https://github.com/Solizardking/robinhood-agents/actions/workflows/ci.yml/badge.svg?branch=main" alt="Continuous integration"></a>
 </p>
 
-This repository is dual-chain despite its name. It packages a dependency-light JavaScript SDK and CLI, three open-source Solidity registries, request templates, a reusable `SKILL.md`, and safety tests. The hosted experience is [Cheshire Terminal Agent Forge](https://cheshireterminal.ai/agents/forge).
+**Cheshire Terminal Agents** (`cheshire-terminal-agents` on npm) is the unified open-source package for:
+
+1. **Agent catalog** — Cheshire-schema JSON agents (DeFi specialists + character personas), locales, and schema validation  
+2. **Identity forge** — dual-chain registration (Robinhood Chain EVM + Solana SVM) with fail-closed safety  
+
+Hosted surfaces: [agent hub](https://cheshireterminal.ai/agents) · [agent forge](https://cheshireterminal.ai/agents/forge) · [catalog API](https://cheshireterminal.ai/api/clawd/browser-agents)
 
 > [!IMPORTANT]
-> **Deployment and availability checked July 19, 2026:** the identity, reputation, and validation registries are deployed on Robinhood Chain testnet (`46630`) and mainnet (`4663`). Identity and validation source are explorer-verified; reputation source verification remains pending. The [live Cheshire registry configuration](https://cheshireterminal.ai/api/robinhood/agents/config) now exposes the six committed addresses, enforces `committed-manifest-only`, and reports all six runtime-code checks as trusted. The [Solana health endpoint](https://cheshireterminal.ai/api/metaplex-agents/health) reports `mainnet-beta` and discloses the sponsoring treasury, complete mint policy, authority model, holder gate, and finality policy. These are live-chain surfaces, not blanket consent: re-fetch both trust responses, review the exact action, and obtain explicit wallet confirmation immediately before any submission.
+> **Deployment and availability checked July 19, 2026:** identity, reputation, and validation registries are deployed on Robinhood Chain testnet (`46630`) and mainnet (`4663`). The [live Cheshire registry configuration](https://cheshireterminal.ai/api/robinhood/agents/config) exposes committed addresses, enforces `committed-manifest-only`, and reports runtime-code checks. The [Solana health endpoint](https://cheshireterminal.ai/api/metaplex-agents/health) reports `mainnet-beta` and discloses treasury, mint policy, authority model, holder gate, and finality. These are live-chain surfaces, not blanket consent: re-fetch trust responses, review the exact action, and obtain explicit wallet confirmation before any submission.
 
-## What the repository provides
+## What this package provides
 
 | Surface | Included | Deliberate boundary |
 |---|---|---|
-| JavaScript SDK | Node-targeted ESM named exports for metadata, unsigned EVM calldata, canonical deployment pins, runtime-code checks, Solana signing envelopes, hosted calls, and inspection | No private-key custody, automatic wallet signing, retries, or bundled TypeScript declarations |
-| CLI | Read-only capabilities/deployments/inspection, local or hosted EVM preparation, and an explicitly confirmed signed Solana mint | No EVM broadcast command; no hidden live-write default |
-| Robinhood Chain | Open-source Identity, Reputation, and Validation contracts plus canonical `4663`/`46630` manifests | Identity is ERC-721; no fungible token launcher is exported by this package |
-| Solana | Owner-authorized, treasury-sponsored Metaplex Core mint client with an attempted Agent Identity registration | Hosted and policy-dependent; fungible Genesis launch remains production-paused |
-| Deployment tooling | Standalone Foundry project, dry-run-first wrapper, chain probes, confirmation gates, audit/RPC attestations, and duplicate-namespace protection | Existing canonical manifests intentionally block rebroadcast on both shipped chains |
-| Agent skill | Portable `robinhood-agent-forge` `SKILL.md`, API/SDK/deployment references, and OpenAI agent metadata | Instruction content must be reviewed and pinned like code |
-| Quality gates | 27 Node test definitions, 6 Foundry tests, Node 18/20/22 CI, formatting, syntax, and package-content checks | Standalone CI skips the monorepo-only drift assertion; tests are not a formal security audit |
-
-Public source: [repository](https://github.com/Solizardking/robinhood-agents) · [tagged release `v0.1.0`](https://github.com/Solizardking/robinhood-agents/releases/tag/v0.1.0) at reviewed commit `71dc92ce49e16ac659facd9ca824b18265d70de8` · [CI](https://github.com/Solizardking/robinhood-agents/actions/workflows/ci.yml) · [hosted forge](https://cheshireterminal.ai/agents/forge). The existing tag is not moved; current `main` includes post-tag documentation and package-allowlist hardening.
-
-## Choose a chain
-
-| | Robinhood Chain | Solana |
-|---|---|---|
-| **Runtime** | EVM · testnet `46630` or mainnet `4663` | SVM · hosted route currently reports `mainnet-beta` |
-| **Identity** | Transferable ERC-721 identity using the repository's ERC-8004 `registration-v1` compatibility surface | Wallet-owned Metaplex Core asset plus an attempted Agent Identity registration |
-| **Authorization** | Review `register(agentURI)` calldata and zero value, then submit from an EVM wallet | Sign a fresh `CLAWD_AGENT_MINT_V2` message; the authenticated sponsor submits the mint |
-| **Authority** | Owner controls the NFT; `agentWallet` initially equals the owner and is cleared by transfer | User owns the Core asset; sponsoring treasury remains update authority; the permanent freeze delegate has no authority and the asset starts frozen |
-| **Result** | Receipt plus direct `ownerOf`, `agentURI`, and `getAgentWallet` reads | Confirmed signature plus asset and Agent Identity reads; registration may require a retry after a successful mint |
-| **Current hosted status** | Committed addresses configured; all six registry runtime checks pass; wallet registration is available after exact review | Sponsored Core mint configured on `mainnet-beta`; treasury and policy are disclosed; treat every submission as a live mainnet write |
-
-Choose exactly one chain for each run. You can repeat the flow on the other chain later, but that creates a second, independent identity. Nothing here silently bridges assets, merges ownership, or creates one token on both chains.
+| **Agent catalog** | 53 Cheshire-schema agents under `agents/`, 17-language locales, `schema/Cheshire_agent_schema.json`, import + validate scripts | Prompts + metadata only — not a trading bot runtime |
+| **JavaScript SDK** | Metadata, unsigned EVM calldata, canonical deployment pins, runtime-code checks, Solana signing envelopes, hosted calls, catalog loaders | No private-key custody, automatic wallet signing, or bundled TypeScript declarations |
+| **CLI** | Catalog list/show/validate; read-only forge discovery; local/hosted EVM prepare; explicit Solana mint | No silent EVM broadcast; no hidden live-write default |
+| **Robinhood Chain** | Identity / Reputation / Validation contracts + `4663` / `46630` manifests | Identity is ERC-721; no fungible launcher |
+| **Solana** | Owner-authorized, treasury-sponsored Metaplex Core mint + Agent Identity attempt | Hosted/policy-dependent; fungible Genesis launch paused |
+| **Agent skill** | Portable forge `SKILL.md` + references | Instruction content — pin like code |
+| **Quality gates** | Node tests (SDK, release, catalog), Foundry tests, pack checks | Tests are not a formal security audit |
 
 ```mermaid
-flowchart LR
-  M["Agent metadata"] --> C{"Choose one chain"}
-  C -->|Robinhood Chain| E["EVM · ERC-8004"]
-  C -->|Solana| S["SVM · Metaplex Core"]
-  E --> EI["Unsigned register intent"]
-  S --> SI["Signed sponsored-mint intent"]
-  EI --> EW["EVM wallet"]
-  SI --> SW["Solana wallet proof"]
-  EW --> EV["Receipt + contract reads"]
-  SW --> SV["Signature + asset reads"]
+flowchart TB
+  subgraph catalog [Agent catalog]
+    S[src prompts] --> V[Cheshire schema]
+    V --> A[agents/*.json]
+    A --> L[locales]
+  end
+  subgraph forge [Identity forge]
+    M[Agent metadata] --> C{Choose one chain}
+    C -->|Robinhood| E[EVM ERC-8004]
+    C -->|Solana| Svm[SVM Metaplex Core]
+    E --> EI[Unsigned register]
+    Svm --> SI[Signed sponsored mint]
+  end
+  A --> M
+  catalog --> HUB[cheshireterminal.ai/agents]
+  forge --> HUB
 ```
 
-## Identity assets are not fungible agent tokens
-
-- The Robinhood identity is an ERC-721 registry record, not a fungible launch token.
-- The Solana identity starts as a Metaplex Core asset, not a fungible launch token.
-- The owner-signed Solana Genesis token builder is implemented elsewhere in Cheshire Terminal but intentionally **paused in production** pending durable intents and launch-link reconciliation.
-- Robinhood's fungible `CheshireBondingLaunchpad` is a separate deployed contract surface. It is not part of ERC-8004 and must never be configured as an identity registry.
-
-## Install or clone
-
-The npm registry package is not published yet. Pin the full reviewed release commit when consuming it from another project:
+## Install
 
 ```bash
-npm install "github:Solizardking/robinhood-agents#71dc92ce49e16ac659facd9ca824b18265d70de8"
+npm install cheshire-terminal-agents
 ```
 
 ```js
 import {
+  // Catalog
+  listCatalogIdentifiers,
+  loadAgentWithLocale,
+  validateCatalog,
+  // Forge
   prepareCanonicalEvmRegistration,
   createAgentForge,
-} from "@cheshire-terminal/robinhood-agents";
+  PACKAGE_NAME,
+  HUB_URL,
+} from "cheshire-terminal-agents";
+
+console.log(PACKAGE_NAME, HUB_URL);
+console.log(listCatalogIdentifiers().length); // 53
+
+const farmer = loadAgentWithLocale("defi-yield-farmer", "en");
+console.log(farmer.meta.title, farmer.author);
+
+const intent = prepareCanonicalEvmRegistration({
+  chainId: 46630,
+  name: farmer.meta.title,
+  description: farmer.meta.description,
+  image: "ipfs://bafy-example",
+  services: [{ name: "MCP", endpoint: "https://example.com/mcp" }],
+});
 ```
 
-Clone the repository when developing the framework or running its complete verification suite:
+CLI binaries: `cheshire-terminal-agents`, `ct-agents`, and legacy alias `robinhood-agents`.
 
 ```bash
-git clone https://github.com/Solizardking/robinhood-agents.git
-cd robinhood-agents
-npm ci
-npm run check
-
-# Read-only discovery of both hosted rails.
-node src/cli.js capabilities --site https://cheshireterminal.ai
-
-# Read the committed address and runtime-code pins without a network request.
-node src/cli.js deployments --chain 4663
-
-# Prepare canonical testnet register(agentURI) calldata entirely locally.
-node src/cli.js prepare-local-robinhood --file examples/robinhood-agent.json
+npx cheshire-terminal-agents agents-list
+npx cheshire-terminal-agents agents-show --id defi-yield-farmer
+npx cheshire-terminal-agents agents-validate
+npx cheshire-terminal-agents capabilities --site https://cheshireterminal.ai
+npx cheshire-terminal-agents deployments --chain 4663
+npx cheshire-terminal-agents prepare-local-robinhood --file examples/robinhood-agent.json
 ```
 
-The package requires Node.js `>=18.18`, is ESM-only, imports `node:crypto`, uses `Buffer`, and currently exposes named JavaScript exports without bundled TypeScript declarations. Treat it as Node-targeted; browser applications should use a compatible bundler/polyfill strategy or the separate hosted wallet flow. Its declared npm name is `@cheshire-terminal/robinhood-agents`; do not run an unpinned registry install until an authenticated release is announced from this repository.
+Requires **Node.js `>=18.18`**, ESM-only.
 
-### CLI commands
+## Agent catalog
+
+| Source | Count | Notes |
+|---|---:|---|
+| DeFi / Solana specialists | 43 | Yield, security, governance, CLAWD / $CLAWD specialists |
+| Character personas | 10 | Buffett, Graham, Cheshire, Clawd, Alice, … |
+| **Total catalog IDs** | **53** | Under `agents/` |
+| Locale trees | 43 | Under `locales/` (characters are EN-primary) |
+
+Every catalog agent uses:
+
+| Field | Value |
+|---|---|
+| `author` | `cheshire-terminal` |
+| `homepage` | `https://cheshireterminal.ai/agents` |
+| `config.systemRole` | Cheshire Terminal–framed specialty prompt |
+| schema | `schema/Cheshire_agent_schema.json` |
+
+### Catalog npm scripts
+
+```bash
+npm run import:agents      # rebuild catalog from monorepo agents/defi-agents + characters
+npm run agents:import      # alias
+npm run agents:validate    # schema + content checks
+npm run agents:list        # print identifiers
+npm run validate:agents    # alias for agents:validate
+```
+
+Import prefers monorepo paths when this package lives inside `solana-clawd`:
+
+- `agents/characters/*.json`
+- `agents/defi-agents/src/*.json`
+- `agents/defi-agents/locales/**`
+- `agents/defi-agents/schema/Cheshire_agent_schema.json`
+
+### Catalog API (SDK)
+
+| Export | Purpose |
+|---|---|
+| `listCatalogIdentifiers()` | Sorted agent IDs |
+| `loadCatalog()` / `validateCatalog()` | Load + schema-shape validate all agents |
+| `loadAgentWithLocale(id, locale?)` | Base agent + locale overlay |
+| `applyLocaleOverlay` / `loadLocaleOverlay` | Merge i18n partials |
+| `convertCharacterToCheshireAgent` | Character JSON → Cheshire agent |
+| `normalizeDefiAgent` | Defi pack normalize |
+| `loadCheshireSchema` / `SCHEMA_PATH` | Schema access |
+
+## Choose a chain (identity forge)
+
+| | Robinhood Chain | Solana |
+|---|---|---|
+| **Runtime** | EVM · testnet `46630` or mainnet `4663` | SVM · hosted route reports `mainnet-beta` |
+| **Identity** | Transferable ERC-721 (ERC-8004 registration-v1) | Wallet-owned Metaplex Core + Agent Identity attempt |
+| **Authorization** | Review `register(agentURI)` calldata, value `0` | Sign fresh `CLAWD_AGENT_MINT_V2`; sponsor submits mint |
+| **Authority** | Owner controls NFT; `agentWallet` clears on transfer | User owns Core; treasury remains update authority; asset starts frozen |
+| **Result** | Receipt + `ownerOf` / `agentURI` / `getAgentWallet` | Signature + asset reads; registration may need retry |
+| **Hosted status** | Committed addresses; runtime checks pass | Sponsored Core mint configured; treat every submit as live mainnet write |
+
+Choose **exactly one chain** per run. A second run on the other chain creates a second independent identity — nothing bridges or merges them.
+
+Identity assets are **not** fungible agent tokens. Robinhood identity is ERC-721. Solana identity starts as Metaplex Core. Fungible Genesis launch remains production-paused.
+
+### CLI forge commands
 
 | Command | Effect | Write risk |
 |---|---|---|
-| `capabilities` | Shows static framework boundaries, Robinhood registry config, and Solana health | Read-only |
-| `deployments [--chain CHAIN_ID]` | Reads committed addresses, receipts, and runtime-code pins | Read-only |
-| `prepare-local-robinhood --file FILE [--chain 4663 or 46630]` | Encodes unsigned calldata against the committed canonical identity registry; defaults to testnet `46630` | Local only; no RPC or broadcast |
-| `prepare-robinhood --file FILE` (`prepare` alias) | Requests reviewable unsigned EVM calldata from Cheshire | No broadcast; fails closed if trusted registry configuration becomes unavailable |
-| `mint-solana --confirm-live-mint --file FILE` | Sends a signed wallet intent to the sponsored mint route | **Live Solana write** |
-| `inspect --platform robinhood --id ID [--chain CHAIN_ID]` | Reads one configured EVM identity; defaults to mainnet `4663` | Read-only |
-| `inspect --platform solana --id ASSET_ADDRESS` | Reads one Solana agent asset | Read-only |
+| `capabilities` | Framework boundaries + hosted rail status | Read-only |
+| `deployments [--chain]` | Committed addresses + runtime pins | Read-only |
+| `prepare-local-robinhood --file` | Local unsigned `register(agentURI)` | Local only |
+| `prepare-robinhood --file` | Hosted unsigned EVM intent | No broadcast |
+| `mint-solana --confirm-live-mint --file` | Sponsored Core mint | **Live Solana write** |
+| `inspect --platform … --id …` | Read one identity | Read-only |
 
 ```bash
-# Hosted unsigned EVM intent. Re-check the returned destination and trust data.
-node src/cli.js prepare-robinhood \
+export CHESHIRE_API_KEY=ct_sk_your_key
+
+# Hosted unsigned EVM intent — re-check destination and trust data.
+npx cheshire-terminal-agents prepare-robinhood \
   --file examples/robinhood-agent.json \
   --site https://cheshireterminal.ai
 
-# Read-only inspection.
-node src/cli.js inspect --platform robinhood --id 1 --chain 4663
-node src/cli.js inspect --platform solana --id SOLANA_ASSET_ADDRESS
-
-# Explicit live Solana write. Replace every placeholder with a newly signed
-# CLAWD_AGENT_MINT_V2 authorization; never store a seed phrase in the JSON file.
-export CHESHIRE_API_KEY=ct_sk_your_key
-node src/cli.js mint-solana \
+# Explicit live Solana write — fresh CLAWD_AGENT_MINT_V2 only.
+npx cheshire-terminal-agents mint-solana \
   --confirm-live-mint \
   --file examples/solana-agent.json \
   --site https://cheshireterminal.ai
 ```
 
-`CHESHIRE_SITE_URL` can replace repeated `--site` flags. `CHESHIRE_API_KEY` is sent as a bearer token when present. A valid holder/admin session or API authorization is required by the hosted Solana write route.
-
 > [!CAUTION]
-> `mint-solana --confirm-live-mint` submits immediately to the selected site; there is no second wallet prompt in the CLI. The CLI cryptographically verifies the canonical Ed25519 envelope and rejects the checked-in placeholders, but that is not user consent. Do not run the command until the file contains a newly constructed, freshly signed authorization intended for the health-reported cluster. Do not store or reuse signed intent files.
+> `mint-solana --confirm-live-mint` submits immediately. The CLI verifies the Ed25519 envelope and rejects placeholders; that is not user consent. Do not store seed phrases in JSON files.
 
-The CLI consumes an already signed Solana authorization and never invokes a wallet adapter. The SDK's `buildSponsoredMintAuthorization()` returns the exact normalized bytes to present to a wallet, but never signs them. Use the [hosted Solana wallet flow](https://cheshireterminal.ai/agents/mint) or integrate those bytes with a trusted wallet. Never invent or hand-edit the signed message.
-
-### Input examples
-
-| File | Use | Safety note |
-|---|---|---|
-| [`examples/robinhood-agent.json`](examples/robinhood-agent.json) | Complete testnet metadata input for local or hosted EVM preparation | The image and service endpoints are illustrative; review or replace them before signing |
-| [`examples/solana-agent.json`](examples/solana-agent.json) | Shape of a signed sponsored Core mint request | Intentionally non-runnable: replace every wallet placeholder with one fresh, exact authorization |
-
-The Robinhood example is safe to pass to `prepare-local-robinhood`; it creates calldata but does not submit it. The Solana example must remain a template until the owner re-checks the live treasury, mint policy, and cluster, replaces every placeholder, and signs the complete normalized intent.
-
-## JavaScript SDK
+## JavaScript forge SDK
 
 ### Pure local EVM preparation
 
-`prepareCanonicalEvmRegistration()` validates metadata and encodes calldata locally against the identity address in the reviewed manifest. It does not contact Cheshire, open a wallet, or broadcast a transaction.
-
 ```js
-import { prepareCanonicalEvmRegistration } from "./src/index.js";
+import { prepareCanonicalEvmRegistration } from "cheshire-terminal-agents";
 
 const intent = prepareCanonicalEvmRegistration({
   chainId: 46630,
@@ -177,58 +221,33 @@ const intent = prepareCanonicalEvmRegistration({
 });
 
 console.log(intent.chainId, intent.to, intent.data, intent.value);
-// Review and decode these exact fields before passing them to an EVM wallet.
 ```
 
-The helper accepts only chain `46630` or `4663`, encodes `register(agentURI)`, sets `value` to `0x0`, and returns the expected runtime hash and byte count. Fetch `eth_getCode` immediately before signing and pass it to `assertCanonicalRuntimeCode()`; a manifest alone cannot prove the current RPC response. `prepareEvmRegistration()` remains available for an explicitly supplied custom registry and labels whether that address matches the canonical pin. If no `agentURI` is supplied, both helpers create a Node `Buffer`-backed base64 JSON data URI. Prefer immutable `ipfs://` metadata for production identities.
+Accepts only `46630` or `4663`, encodes `register(agentURI)`, sets `value` to `0x0`. Fetch `eth_getCode` and pass it to `assertCanonicalRuntimeCode()` before signing.
 
 ### Hosted client
 
 ```js
-import { createAgentForge } from "./src/index.js";
+import { createAgentForge } from "cheshire-terminal-agents";
 
 const forge = createAgentForge({
   baseUrl: "https://cheshireterminal.ai",
   apiKey: process.env.CHESHIRE_API_KEY,
 });
 
-const status = await forge.capabilities(); // read-only
-
-// Unsigned EVM intent; re-check the current trusted registry response first.
-const evmIntent = await forge.prepareRobinhood(robinhoodRegistration);
-
-// Explicit live Solana write. The input must include a fresh wallet message
-// and the owner's canonical base64 Ed25519 signature. The SDK verifies both.
-const solanaResult = await forge.mintSolana(signedSolanaMint);
-
-const evmAgent = await forge.inspect({ platform: "robinhood", id: 1, chainId: 4663 });
-const svmAgent = await forge.inspect({ platform: "solana", id: "ASSET_ADDRESS" });
+const status = await forge.capabilities();
+const evmIntent = await forge.prepareRobinhood(registration);
+const solanaResult = await forge.mintSolana(signedSolanaMint); // live write
 ```
 
-Use `./src/index.js` only while running directly from a clone. With the pinned GitHub dependency, import `@cheshire-terminal/robinhood-agents`.
-
 ### Solana wallet authorization
-
-The SDK binds the complete normalized mint intent to a five-minute `CLAWD_AGENT_MINT_V2` message and verifies the 64-byte Ed25519 signature locally before any request. The server separately enforces its live holder gate and durable single-use replay claim.
 
 ```js
 import {
   assertSponsoredMintAuthorization,
   buildSponsoredMintAuthorization,
   createAgentForge,
-} from "@cheshire-terminal/robinhood-agents";
-
-const source = {
-  ownerPubkey: "BASE58_OWNER",
-  name: "Research Agent",
-  symbol: "AGENT",
-  description: "Publishes verifiable research.",
-  agentType: "research",
-  personality: "careful",
-  capabilities: ["research"],
-  imageUri: "ipfs://bafy-image...",
-  customRegistrationUri: "ipfs://bafy-registration...",
-};
+} from "cheshire-terminal-agents";
 
 const authorization = buildSponsoredMintAuthorization(source);
 const signatureBytes = await wallet.signMessage(
@@ -239,282 +258,90 @@ const signed = {
   walletMessage: authorization.message,
   walletSignature: Buffer.from(signatureBytes).toString("base64"),
 };
-
 assertSponsoredMintAuthorization(signed);
-
-// Live write: call only after re-checking health, cluster, treasury, policy,
-// every signed field, and obtaining the owner's explicit confirmation.
-const result = await createAgentForge({
+await createAgentForge({
   baseUrl: "https://cheshireterminal.ai",
   apiKey: process.env.CHESHIRE_API_KEY,
 }).mintSolana(signed);
 ```
 
-`wallet` above means a trusted Solana wallet adapter implementing `signMessage`; do not substitute an application-held private key. The `Buffer` conversion shown is for Node or a Node-compatible bundle; a browser integration must encode the same 64 signature bytes as canonical base64. Rebuild and re-sign if any field or the reviewed health response changes. A message older than five minutes—or more than thirty seconds in the future—is rejected.
+## Deployed ERC-8004 addresses
 
-### Exports
-
-| Export | Purpose |
-|---|---|
-| `platforms` | Informational EVM/SVM network identifiers; operations still follow explicit input and hosted configuration |
-| `frameworkCapabilities` | Explicit identity and fungible-token availability boundaries |
-| `canonicalDeployments` | Frozen reviewed address, receipt, binding, and runtime-code pins for `4663` and `46630` |
-| `getCanonicalDeployment()` / `getCanonicalContract()` | Select a complete chain manifest or one Identity/Reputation/Validation contract pin |
-| `inspectCanonicalRuntimeCode()` / `assertCanonicalRuntimeCode()` | Compare RPC `eth_getCode` output with a pinned hash and byte count |
-| `identityRegistryAbi` | Minimal ABI for `register(string agentURI)` |
-| `SPONSORED_MINT_AUTHORIZATION_VERSION` | Exact `CLAWD_AGENT_MINT_V2` signing-domain string |
-| `SPONSORED_MINT_AUTHORIZATION_MAX_AGE_MS` | Five-minute client authorization lifetime |
-| `SPONSORED_MINT_AUTHORIZATION_MAX_FUTURE_SKEW_MS` | Thirty-second permitted future clock skew |
-| `buildRegistration(input)` | Validates and normalizes ERC-8004 registration metadata |
-| `registrationDataUri(document)` | Encodes a registration document as a base64 data URI |
-| `prepareEvmRegistration(input)` | Pure unsigned EVM intent builder with an explicit trusted registry |
-| `prepareCanonicalEvmRegistration(input)` | Pure unsigned EVM intent builder using a committed canonical registry pin |
-| `normalizeSponsoredMintIntent(input)` | Produces the bounded Solana intent whose complete digest is signed |
-| `sponsoredMintIntentSha256(input)` | Computes the canonical SHA-256 digest embedded in the wallet message |
-| `buildSponsoredMintAuthorization(input)` | Normalizes a Solana Core mint intent and returns exact wallet-signing bytes; never signs |
-| `assertSponsoredMintAuthorization(input)` | Checks freshness, normalized digest, canonical base64, and Ed25519 ownership before POST |
-| `serializeSponsoredMintRequest(input)` | Maps SDK `registrationUri` to server-recognized `customRegistrationUri` without changing signed bytes |
-| `createCheshireClient(options)` | Low-level hosted API client |
-| `createAgentForge(options)` | Chain-selectable local preparation, hosted preparation, explicitly live Core mint, and inspection facade |
-
-These are all 22 named exports in the current source and tagged `v0.1.0` code. The package also exports `./deployments`, the two JSON manifests through `./deployments/mainnet-4663` and `./deployments/testnet-46630`, and `./package.json`.
-
-The public client deliberately does not expose operator-only Solana server-signer mutations or a fungible token-launch method. Hosted methods return parsed server JSON without TypeScript declarations, general response-schema validation, retries, or a built-in timeout; callers must validate fields they rely on and supply their own request boundary where needed.
-
-## Hosted API map
-
-| Method and route | Purpose | Access |
+| Contract | Mainnet `4663` | Testnet `46630` |
 |---|---|---|
-| `GET /api/robinhood/agents/config` | Trusted EVM networks and registry addresses | Public read |
-| `POST /api/robinhood/agents/prepare-registration` | Build unsigned `register(agentURI)` calldata | Stateless preparation; fails closed without trusted config |
-| `GET /api/robinhood/agents/:agentId?chainId=...` | Direct configured-registry identity read | Public read |
-| `GET /api/robinhood/agents` | Mainnet agent discovery | Public read |
-| `GET /api/metaplex-agents/health` | Solana cluster and backend capability status | Public read |
-| `POST /api/metaplex-agents/mint` | Wallet-authorized, treasury-sponsored Core mint and Agent Identity attempt | Authenticated live write |
-| `GET /api/metaplex-agents/fetch/:assetAddress` | Fetch confirmed Solana agent data | Public read |
+| Identity | [`0x70361a37951d66F8C44Cfb45873DF2Ba8b9Fc950`](https://robinhoodchain.blockscout.com/address/0x70361a37951d66F8C44Cfb45873DF2Ba8b9Fc950) | [`0xf1A30080F5dA64Ab0456F3ADC06DfD8FC9d2fDB3`](https://explorer.testnet.chain.robinhood.com/address/0xf1A30080F5dA64Ab0456F3ADC06DfD8FC9d2fDB3) |
+| Reputation | [`0x8a4154a6c1Ee44B4B790948f9613E3FB934628Ff`](https://robinhoodchain.blockscout.com/address/0x8a4154a6c1Ee44B4B790948f9613E3FB934628Ff) | [`0x2137528bf45480693fd22704A978F564A3Bb1570`](https://explorer.testnet.chain.robinhood.com/address/0x2137528bf45480693fd22704A978F564A3Bb1570) |
+| Validation | [`0x020d053040Da31195e5F9A992B8edA663DBb073b`](https://robinhoodchain.blockscout.com/address/0x020d053040Da31195e5F9A992B8edA663DBb073b) | [`0x4126217abb0d12D8515698E819C543466f42eefd`](https://explorer.testnet.chain.robinhood.com/address/0x4126217abb0d12D8515698E819C543466f42eefd) |
 
-`/api/metaplex-agents/register`, `/delegate`, and `/set-token` are operator-only server-signer routes. Do not expose them to normal users.
-
-A Solana mint can confirm while Agent Identity registration fails. Treat HTTP `202` or `partial: true` as partial success, surface `registered` and `registrationError`, preserve both mint and registration signatures when returned, and never claim a complete Agent Identity until the registration read succeeds.
-
-## ERC-8004-compatible registry suite
-
-The canonical suite is deployed as three contracts per Robinhood chain. Reputation and validation permanently reference the identity registry supplied to their constructors. Clients must pin reviewed addresses because the contracts cannot prevent someone from deploying a competing suite.
-
-| Contract | Primary calls | Important guardrail |
-|---|---|---|
-| [`CheshireAgentIdentityRegistry`](contracts/CheshireAgentIdentityRegistry.sol) | ERC-721 reads/transfers/approvals; three `register` overloads; `setAgentURI`; `getMetadata`/`setMetadata`; `getAgentWallet`/`setAgentWallet`/`unsetAgentWallet`; `walletProofDigest`; `isAuthorized` | `setAgentWallet` requires deadline-bound EIP-712 proof from an EOA or ERC-1271 wallet; transferring the NFT clears its verified agent wallet |
-| [`CheshireAgentReputationRegistry`](contracts/CheshireAgentReputationRegistry.sol) | `giveFeedback`; `revokeFeedback`; `appendResponse`; `readFeedback`; `readAllFeedback`; `getSummary`; response/client/index reads | An identity owner or authorized operator cannot review its own agent; reputation is transparent feedback, not automatic Sybil resistance |
-| [`CheshireAgentValidationRegistry`](contracts/CheshireAgentValidationRegistry.sol) | `validationRequest`; `validationResponse`; `getValidationStatus`; `getSummary`; agent and validator request discovery | Only the validator named by a request may answer; responses are `0–100` attestations and provide no staking or slashing |
-
-Compatibility targets the concrete ERC-8004 `registration-v1` interface implemented here. Review the code against the [current EIP-8004 specification](https://eips.ethereum.org/EIPS/eip-8004) before production use.
-
-### Deployed addresses
-
-| Contract | Robinhood mainnet `4663` | Robinhood testnet `46630` |
-|---|---|---|
-| Identity | [`0x70361a37951d66F8C44Cfb45873DF2Ba8b9Fc950`](https://robinhoodchain.blockscout.com/address/0x70361a37951d66F8C44Cfb45873DF2Ba8b9Fc950) · source verified | [`0xf1A30080F5dA64Ab0456F3ADC06DfD8FC9d2fDB3`](https://explorer.testnet.chain.robinhood.com/address/0xf1A30080F5dA64Ab0456F3ADC06DfD8FC9d2fDB3) · source verified |
-| Reputation | [`0x8a4154a6c1Ee44B4B790948f9613E3FB934628Ff`](https://robinhoodchain.blockscout.com/address/0x8a4154a6c1Ee44B4B790948f9613E3FB934628Ff) · verification pending | [`0x2137528bf45480693fd22704A978F564A3Bb1570`](https://explorer.testnet.chain.robinhood.com/address/0x2137528bf45480693fd22704A978F564A3Bb1570) · verification pending |
-| Validation | [`0x020d053040Da31195e5F9A992B8edA663DBb073b`](https://robinhoodchain.blockscout.com/address/0x020d053040Da31195e5F9A992B8edA663DBb073b) · source verified | [`0x4126217abb0d12D8515698E819C543466f42eefd`](https://explorer.testnet.chain.robinhood.com/address/0x4126217abb0d12D8515698E819C543466f42eefd) · source verified |
-
-The manifests pin runtime bytecode as well as addresses. `assertCanonicalRuntimeCode()` fails closed unless both the Keccak-256 hash and byte length match:
-
-| Chain | Contract | Runtime-code hash | Bytes |
-|---|---|---|---:|
-| `4663` | Identity | `0x1c3c472c561bd5f45b9056fe4716aa57d60fd4d06eef9e8616c926ed744d2aa3` | 7,667 |
-| `4663` | Reputation | `0xb145a0e76b834446b001d83fb4657c22d53c150983c8076eae8845d484e28a63` | 7,882 |
-| `4663` | Validation | `0x9193febb5cb157a71f4043e9cdd3e21bfcb982229ba04669be6a696621a11c89` | 4,186 |
-| `46630` | Identity | `0x1c3c472c561bd5f45b9056fe4716aa57d60fd4d06eef9e8616c926ed744d2aa3` | 7,667 |
-| `46630` | Reputation | `0xeaee2403701ef26109c97468855ddf7580b459bf0fa5089e3d383b637ba90547` | 7,882 |
-| `46630` | Validation | `0x1383bce31f8d3adde3049587f63075fccfc76ea4a6b646020294df9aec515d31` | 4,186 |
-
-All six pins matched live `eth_getCode` responses when the manifests were checked on July 19, 2026. A future reader should re-run the check against the exact RPC they intend to use; this timestamp is evidence, not a permanent liveness guarantee.
-
-<details>
-<summary><strong>Mainnet creation receipts</strong></summary>
-
-All three transactions succeeded in block `14150372` on July 19, 2026 at `21:06:37 UTC`.
-
-| Contract | Creation transaction |
-|---|---|
-| Identity | [`0xfbd83784276d5463bb0a1cd419dc7634b3aff85a5b66456b1dbb6a3951aa6db0`](https://robinhoodchain.blockscout.com/tx/0xfbd83784276d5463bb0a1cd419dc7634b3aff85a5b66456b1dbb6a3951aa6db0) |
-| Reputation | [`0x7ac254c70427a5f744ddecec5fe90b265ba3d71d018ca227a36ba3a6aa813fa6`](https://robinhoodchain.blockscout.com/tx/0x7ac254c70427a5f744ddecec5fe90b265ba3d71d018ca227a36ba3a6aa813fa6) |
-| Validation | [`0x04c7048be36330c91022161375729ce4488abf0815f558376b1ad5fcee1ca179`](https://robinhoodchain.blockscout.com/tx/0x04c7048be36330c91022161375729ce4488abf0815f558376b1ad5fcee1ca179) |
-
-</details>
-
-<details>
-<summary><strong>Testnet creation receipts</strong></summary>
-
-The identity transaction succeeded in block `91559343`; reputation and validation succeeded in block `91559344` on July 19, 2026.
-
-| Contract | Creation transaction |
-|---|---|
-| Identity | [`0xffeaef9464b599e67c7ab21498fdfcc7d7500f3697781e7d54ff2d3ce1e4cd4d`](https://explorer.testnet.chain.robinhood.com/tx/0xffeaef9464b599e67c7ab21498fdfcc7d7500f3697781e7d54ff2d3ce1e4cd4d) |
-| Reputation | [`0xe21f750118bea24f8da1e5475e41bf588dba55b94c721ced219592ec26f7bab6`](https://explorer.testnet.chain.robinhood.com/tx/0xe21f750118bea24f8da1e5475e41bf588dba55b94c721ced219592ec26f7bab6) |
-| Validation | [`0xfd92b02953b638f36d4b5580b21786b69e7935b208f8cd656bb5104485d03a7e`](https://explorer.testnet.chain.robinhood.com/tx/0xfd92b02953b638f36d4b5580b21786b69e7935b208f8cd656bb5104485d03a7e) |
-
-</details>
-
-### Hosted trust checklist
-
-The suite is already deployed. Do **not** rerun a deployer and create a competing identity namespace. The current application source accepts only the committed [mainnet](deployments/agent-registries-mainnet-4663.json) and [testnet](deployments/agent-registries-testnet-46630.json) manifests; runtime environment variables cannot redirect the wallet flow to another registry.
-
-Before each registration, verify the current public trust response:
+Manifests pin runtime bytecode. Do **not** redeploy and create a competing identity namespace. Before each registration, verify:
 
 ```bash
 curl -fsS https://cheshireterminal.ai/api/robinhood/agents/config \
   | jq '{addressPolicy, runtimeTrustRequired, networks: [.networks[] | {
-      chainId,
-      contracts,
-      trusted: .runtimeVerification.trusted,
-      checks: [.runtimeVerification.contracts[] | {role, status}]
+      chainId, contracts, trusted: .runtimeVerification.trusted
     }]}'
 ```
-
-Require `addressPolicy: "committed-manifest-only"`, the exact pinned addresses, and six passing runtime-code checks. Then execute an end-to-end testnet wallet registration before exercising mainnet. Never expose alternative trusted addresses as mutable `VITE_*` browser configuration.
-
-### Reproduce and deploy the registry infrastructure
-
-This repository includes a standalone Foundry project, a Solidity test harness, and a fixed deployment entrypoint. Install the pinned test dependency and compile first:
-
-```bash
-npm run setup:solidity
-npm run test:solidity
-
-# A simulation still needs an RPC and a throwaway gas-only key because Forge
-# derives the broadcaster, but it does not send a transaction.
-EXPECTED_CHAIN_ID=46630 \
-PRIVATE_KEY=0xYOUR_32_BYTE_THROWAWAY_KEY \
-deploy/scripts/deploy-agent-registries.sh
-```
-
-The wrapper defaults to simulation, probes `eth_chainId` before Forge, rejects malformed URLs and URL user-info credentials, and requires exact chain-specific confirmation for `--broadcast`. Mainnet additionally requires a quota-backed RPC attestation and a nonzero audit-artifact digest. The Solidity script repeats chain and confirmation checks in broadcast context.
-
-Both supported chains already have canonical deployments, so the shipped manifests make `--broadcast` stop before reading `PRIVATE_KEY` or contacting an RPC. That prevents accidental duplicate namespaces. An intentional independent registry operator must fork the project, choose and document a distinct namespace, replace the canonical manifest/policy, audit the contracts, and retain all broadcast gates. A deployment receipt proves only that bytecode was created; it does not make the new namespace canonical or audited.
-
-### Separate Robinhood mainnet contracts
-
-These contracts are related to Cheshire's broader token-launch stack but are **not** part of this repository's ERC-8004 registry suite:
-
-| Contract | Mainnet address | Purpose |
-|---|---|---|
-| `CheshireProvenanceRegistry` | [`0xBa6f151D8817090A108A6a52A0B8c502D9a5De19`](https://robinhoodchain.blockscout.com/address/0xba6f151d8817090a108a6a52a0b8c502d9a5de19) | Ticker and launch provenance |
-| `CheshireBondingLaunchpad` | [`0x6344a4C108B8Fe03e9D79523AB0Ac588a45cd092`](https://robinhoodchain.blockscout.com/address/0x6344a4c108b8fe03e9d79523ab0ac588a45cd092) | First-party bonding-curve factory |
-| First `CLAWD` bonding token | [`0xE1c14eE7DbACCE44315191c13f63963BfeAe5D0c`](https://robinhoodchain.blockscout.com/address/0xe1c14ee7dbacce44315191c13f63963bfeae5d0c) | First token created by the pinned launchpad |
-
-Their Blockscout source verification is currently incomplete. Never use any of these three addresses as an identity, reputation, or validation registry.
-
-## Install the reusable agent skill
-
-The skill teaches an AI coding agent to ask for a chain choice, keep live writes explicit, inspect canonical state, and avoid private-key handling.
-
-```bash
-# Install into this project's agent-skill directory.
-mkdir -p .agents/skills
-cp -R skills/robinhood-agent-forge .agents/skills/
-```
-
-Install from a reviewed commit or release and keep the package and skill versions pinned together; a skill is executable instruction content, not merely documentation.
-
-Then ask your agent:
-
-```text
-Use $robinhood-agent-forge to register my agent. Ask me to choose
-Robinhood Chain or Solana before preparing any transaction.
-```
-
-Skill contents:
-
-- [`SKILL.md`](skills/robinhood-agent-forge/SKILL.md) — lifecycle and guardrails.
-- [`references/api.md`](skills/robinhood-agent-forge/references/api.md) — hosted routes and request behavior.
-- [`references/deployment.md`](skills/robinhood-agent-forge/references/deployment.md) — network and deployment safety.
-- [`references/sdk.md`](skills/robinhood-agent-forge/references/sdk.md) — exact SDK exports, install, and wallet-signing examples.
-- [`agents/openai.yaml`](skills/robinhood-agent-forge/agents/openai.yaml) — UI metadata and default prompt.
 
 ## Project layout
 
 ```text
-robinhood-agents/
-├── .github/workflows/ci.yml
-├── assets/agent-forge.svg
-├── contracts/
-│   ├── CheshireAgentIdentityRegistry.sol
-│   ├── CheshireAgentReputationRegistry.sol
-│   └── CheshireAgentValidationRegistry.sol
-├── deploy/
-│   ├── script/DeployCheshireAgentRegistries.s.sol
-│   ├── script/RobinhoodDeploymentSafety.s.sol
-│   ├── scripts/deploy-agent-registries.sh
-│   ├── scripts/deployment-safety.cjs
-│   └── test/
-├── deployments/
-│   ├── agent-registries-mainnet-4663.json
-│   └── agent-registries-testnet-46630.json
-├── examples/
-│   ├── robinhood-agent.json
-│   └── solana-agent.json
-├── skills/robinhood-agent-forge/
-│   ├── SKILL.md
-│   ├── agents/openai.yaml
-│   └── references/{api,deployment,sdk}.md
+cheshire-terminal-agents/          # package root (repo folder: robinhood-agents/)
+├── assets/cheshire-terminal-agents.svg
+├── agents/                        # 53 Cheshire catalog agents
+├── locales/                       # i18n overlays
+├── schema/Cheshire_agent_schema.json
+├── contracts/                     # ERC-8004 registry suite
+├── deployments/                   # 4663 + 46630 pins
+├── deploy/                        # Foundry deploy + safety
+├── examples/                      # robinhood + solana templates
+├── skills/robinhood-agent-forge/  # portable agent skill
+├── scripts/import-agents.mjs
 ├── src/
-│   ├── cli.js
+│   ├── index.js                   # SDK + catalog exports
+│   ├── agentCatalog.js
 │   ├── deployments.js
-│   └── index.js
-├── test/{release,sdk}.test.js
-├── .env.example
-├── foundry.toml
-├── remappings.txt
-├── package.json
-├── package-lock.json
-├── README.md
-└── LICENSE
+│   └── cli.js
+├── test/
+├── package.json                   # name: cheshire-terminal-agents
+└── README.md
 ```
-
-| Path | What it is for |
-|---|---|
-| [`contracts/`](contracts/) | Auditable Solidity implementation of the three registry roles |
-| [`examples/`](examples/) | Copyable EVM metadata and intentionally placeholder-only signed Solana JSON |
-| [`skills/`](skills/) | Portable agent instructions that preserve chain choice and write-confirmation rules |
-| [`src/`](src/) | Zero-build SDK, CLI, deployment selection, and runtime verification |
-| [`test/`](test/) | Release/package drift and SDK/API behavior tests; deployment tests live under `deploy/test/` |
-| [`package.json`](package.json) | Package identity, `robinhood-agents` binary, exports, Node floor, scripts, and release allowlist |
-| [`LICENSE`](LICENSE) | Complete MIT license for reuse and contribution |
-| [`README.md`](README.md) | This public entry point: capabilities, contracts, release status, safety, and operations |
-
-The npm tarball allowlist includes the SDK, contracts, deployment tooling/manifests, skill, examples, artwork, tests, environment template, Foundry configuration, README, and license. It excludes local secrets, build artifacts, dependency directories, and deployment libraries.
 
 ## Security model
 
-- Never request, store, print, or transmit a user's private key or seed phrase.
-- The hosted Robinhood API prepares unsigned calldata and never broadcasts for the user.
-- Re-fetch registry configuration before an EVM write; decode `register(agentURI)`, require zero value, verify bytecode, simulate, and check receipt events plus direct contract state.
-- ERC-721 approvals are transfer-capable authority. Transferring an identity clears its verified `agentWallet`; the new owner must set one with fresh EIP-712 or ERC-1271 proof.
-- A sponsored Solana mint still requires a fresh owner-wallet message and signature. Disclose ownership, treasury update authority, freeze delegate policy, cluster, and returned transaction signature.
-- Reputation is transparent feedback, not automatically Sybil-resistant. Validation records what a named validator reports; it does not provide staking, slashing, or universal truth.
-- A successful deployment receipt proves bytecode exists, not that the contracts are audited or that a hosted product is configured.
+- Never request, store, print, or transmit private keys or seed phrases.
+- Hosted Robinhood API prepares unsigned calldata and never broadcasts for the user.
+- Re-fetch registry config before EVM writes; require zero value; verify bytecode.
+- Sponsored Solana mint still needs a fresh owner wallet message + signature.
+- Catalog prompts are instruction content — not custody or auto-execution.
 - Agent identity assets are not promises of investment value.
 
-## Development and tests
+## Development & tests
 
 ```bash
-npm test               # 27 Node test definitions; no live writes
-npm run check          # syntax checks plus the complete Node suite
-npm run setup:solidity # install forge-std v1.9.6 into ignored deploy/lib
-forge fmt --check      # Solidity formatting gate
-npm run test:solidity  # compile and run all 6 Foundry tests
-npm run pack:check     # inspect release contents without publishing
+npm test                 # SDK + release + catalog tests
+npm run check            # syntax + full Node suite
+npm run import:agents    # rebuild catalog from monorepo sources
+npm run agents:validate
+npm run setup:solidity
+npm run test:solidity
+npm run pack:check
 ```
 
-| Suite | Tests | Coverage focus |
-|---|---:|---|
-| `test/sdk.test.js` | 13 | EVM metadata/calldata, deployment pins, runtime drift, signed Solana intent binding, hosted auth, and no disguised live preparation |
-| `test/release.test.js` | 5 | MIT text, package exports/files, fixed deploy entrypoint, monorepo drift, and offline CLI placeholder rejection |
-| `deploy/test/deployment-safety.test.cjs` | 9 | Chain allowlist, RPC handling, exact confirmations, mainnet attestations, and canonical rebroadcast blocking |
-| `deploy/test/CheshireAgentRegistries.t.sol` | 6 | Identity mint/metadata/transfer, reserved-wallet metadata, reputation, validation, and registry bindings |
+| Suite | Focus |
+|---|---|
+| `test/sdk.test.js` | EVM calldata, deployment pins, Solana auth, hosted client |
+| `test/release.test.js` | MIT, exports, deploy gates, offline CLI |
+| `test/agents-catalog.test.js` | Schema, identifiers, locales, content preservation |
+| `deploy/test/*` | Deployment safety + Solidity registry tests |
 
-The SDK intentionally has no build step. Node tests mock hosted requests and perform no live writes. In this monorepo all 27 pass; a standalone public checkout skips the one monorepo-drift assertion, so public CI normally reports 26 pass and 1 skip. [CI](https://github.com/Solizardking/robinhood-agents/actions/workflows/ci.yml) runs the suite on Node 18, 20, and 22, then checks Solidity formatting and all Foundry tests. The current `main` packlist was validated at exactly 30 public files with `deploy/lib` excluded; `npm run pack:check` previews it without publishing.
+## Version note
+
+| Version | Role |
+|---|---|
+| `1.43.0` | First catalog-only npm publish |
+| **`1.44.0`** | **Unified Cheshire Terminal Agents** — catalog + dual-chain forge (this package) |
+
+Legacy package name `@cheshire-terminal/robinhood-agents` and CLI alias `robinhood-agents` remain documented for migrations. Prefer `cheshire-terminal-agents` / `ct-agents`.
 
 ## License
 

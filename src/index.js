@@ -40,6 +40,12 @@ export {
   summarizeLocales,
 } from "./agentCatalog.js";
 
+/** Published npm package identity for Cheshire Terminal Agents. */
+export const PACKAGE_NAME = "cheshire-terminal-agents";
+export const PACKAGE_VERSION = "1.44.1";
+export const HUB_URL = "https://cheshireterminal.ai/agents";
+export const CATALOG_API = "https://cheshireterminal.ai/api/clawd/browser-agents";
+
 export const platforms = Object.freeze({
   robinhood: Object.freeze({
     vm: "evm",

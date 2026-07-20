@@ -21,9 +21,17 @@ test("license contains the complete canonical MIT grant, notice, and warranty te
 
 test("package exposes deployment pins and ships standalone Foundry tooling", () => {
   const pkg = JSON.parse(source("package.json"));
+  assert.equal(pkg.name, "cheshire-terminal-agents");
   assert.equal(pkg.license, "MIT");
   assert.equal(pkg.publishConfig.access, "public");
+  assert.ok(pkg.bin["cheshire-terminal-agents"]);
+  assert.ok(pkg.bin["ct-agents"]);
   assert.equal(pkg.exports["./deployments"], "./src/deployments.js");
+  assert.ok(pkg.files.includes("agents"), "catalog agents/ must ship");
+  assert.ok(pkg.files.includes("locales"), "locales/ must ship");
+  assert.ok(pkg.files.includes("schema"), "schema/ must ship");
+  assert.ok(pkg.scripts["import:agents"]);
+  assert.ok(pkg.scripts["agents:validate"]);
   for (const entry of [
     "deploy/script",
     "deploy/scripts",

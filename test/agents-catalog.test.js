@@ -46,7 +46,7 @@ function sourceDefiStems() {
     .sort();
 }
 
-test("Cheshire schema is vendored under robinhood-agents", () => {
+test("Cheshire schema is vendored under cheshire-terminal-agents package", () => {
   assert.ok(existsSync(SCHEMA_PATH), `schema missing at ${SCHEMA_PATH}`);
   const schema = loadCheshireSchema();
   assert.equal(schema.type, "object");

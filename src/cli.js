@@ -6,11 +6,21 @@ import {
   createAgentForge,
   frameworkCapabilities,
   prepareCanonicalEvmRegistration,
+  listCatalogIdentifiers,
+  loadAgentWithLocale,
+  validateCatalog,
+  summarizeLocales,
 } from "./index.js";
 
-const USAGE = `robinhood-agents <command> [options]
+const USAGE = `cheshire-terminal-agents <command> [options]
+(aliases: ct-agents, robinhood-agents)
 
-Read-only / unsigned:
+Agent catalog:
+  agents-list
+  agents-validate
+  agents-show --id IDENTIFIER [--locale LOCALE]
+
+Read-only / unsigned forge:
   capabilities [--site URL]
   deployments [--chain 4663|46630]
   prepare-local-robinhood --file registration.json [--chain 4663|46630]
@@ -70,6 +80,24 @@ try {
   if (command === "help" || command === "--help" || command === "-h") {
     console.log(USAGE);
     process.exit(0);
+  } else if (command === "agents-list" || command === "list-agents") {
+    const ids = listCatalogIdentifiers();
+    const locales = summarizeLocales();
+    output = {
+      package: "cheshire-terminal-agents",
+      hub: "https://cheshireterminal.ai/agents",
+      count: ids.length,
+      localeAgents: locales.agentCount,
+      localeFiles: locales.fileCount,
+      identifiers: ids,
+    };
+  } else if (command === "agents-validate" || command === "validate-agents") {
+    const report = validateCatalog();
+    output = report;
+    if (!report.ok) process.exitCode = 1;
+  } else if (command === "agents-show" || command === "show-agent") {
+    if (!flags.id) throw new Error("agents-show requires --id IDENTIFIER");
+    output = loadAgentWithLocale(flags.id, flags.locale || "en");
   } else if (command === "capabilities") {
     output = await forge.capabilities();
   } else if (command === "deployments") {

@@ -1,28 +1,36 @@
 {
-  "name": "@cheshire-terminal/robinhood-agents",
-  "version": "0.1.0",
-  "description": "Dual-chain agent identity SDK and guarded ERC-8004 registry tooling for Robinhood Chain and Solana",
+  "name": "cheshire-terminal-agents",
+  "version": "1.44.1",
+  "description": "Cheshire Terminal Agents — dual-chain identity forge (Robinhood Chain EVM + Solana SVM) plus production DeFi/Solana agent catalog, schema, and locales for cheshireterminal.ai/agents",
   "type": "module",
   "sideEffects": false,
   "license": "MIT",
+  "author": "Cheshire Terminal <operators@cheshireterminal.ai>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Solizardking/robinhood-agents.git"
+    "url": "git+https://github.com/Solizardking/Cheshire-Terminal-Agents.git"
   },
-  "homepage": "https://github.com/Solizardking/robinhood-agents#readme",
+  "homepage": "https://cheshireterminal.ai/agents",
   "bugs": {
-    "url": "https://github.com/Solizardking/robinhood-agents/issues"
+    "url": "https://github.com/Solizardking/Cheshire-Terminal-Agents/issues"
   },
   "keywords": [
+    "cheshire-terminal",
+    "cheshire-terminal-agents",
     "ai-agents",
+    "defi",
     "erc-8004",
     "evm",
     "robinhood-chain",
     "solana",
     "svm",
-    "metaplex"
+    "metaplex",
+    "clawd",
+    "mcp"
   ],
   "bin": {
+    "cheshire-terminal-agents": "./src/cli.js",
+    "ct-agents": "./src/cli.js",
     "robinhood-agents": "./src/cli.js"
   },
   "exports": {
@@ -36,19 +44,23 @@
   },
   "scripts": {
     "import:agents": "node scripts/import-agents.mjs",
+    "agents:import": "node scripts/import-agents.mjs",
+    "agents:validate": "node --test test/agents-catalog.test.js",
+    "agents:list": "node -e \"import('./src/agentCatalog.js').then(m=>console.log(m.listCatalogIdentifiers().join('\\n')))\"",
     "validate:agents": "node --test test/agents-catalog.test.js",
     "test": "node --test test/*.test.js deploy/test/*.test.cjs",
     "check": "node --check src/index.js && node --check src/deployments.js && node --check src/agentCatalog.js && node --check src/cli.js && node --check deploy/scripts/deployment-safety.cjs && npm test",
     "setup:solidity": "forge install foundry-rs/forge-std@v1.9.6 --no-git --shallow",
     "test:solidity": "forge test -vv",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm test"
   },
   "engines": {
     "node": ">=18.18"
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "viem": "^2.38.0"

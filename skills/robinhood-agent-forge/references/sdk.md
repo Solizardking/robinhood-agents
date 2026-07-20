@@ -1,17 +1,17 @@
 # Open-source SDK and CLI
 
-- Repository: `https://github.com/Solizardking/robinhood-agents`
-- Package name: `@cheshire-terminal/robinhood-agents`
-- Release: `v0.1.0`
+- Repository: `https://github.com/Solizardking/Cheshire-Terminal-Agents`
+- Package name: `cheshire-terminal-agents` (Cheshire Terminal Agents — catalog + forge)
+- CLI: `cheshire-terminal-agents` / `ct-agents` (alias `robinhood-agents`)
+- Release: npm `1.44.0+` (unified catalog + forge)
 - Runtime: Node.js 18 or newer, ESM-only
 
-Install the immutable GitHub release:
-
 ```bash
-npm install "github:Solizardking/robinhood-agents#v0.1.0"
+npm install cheshire-terminal-agents
+npm view cheshire-terminal-agents version
 ```
 
-If verifying from source, clone the repository, check out `v0.1.0`, inspect `git rev-parse HEAD`, then run `npm install` and `npm run check`. Do not substitute an unreviewed branch. The package name is reserved in `package.json`; do not assume a public npm release exists unless `npm view @cheshire-terminal/robinhood-agents@0.1.0` succeeds.
+From source: clone the repository, run `npm install` and `npm run check`.
 
 ## Exact imports
 
@@ -38,7 +38,7 @@ import {
   prepareEvmRegistration,
   registrationDataUri,
   sponsoredMintIntentSha256,
-} from "@cheshire-terminal/robinhood-agents";
+} from "cheshire-terminal-agents";
 ```
 
 The package currently ships named JavaScript exports without bundled TypeScript declarations.
@@ -48,7 +48,7 @@ The package currently ships named JavaScript exports without bundled TypeScript 
 Use `prepareCanonicalEvmRegistration()` to select the reviewed manifest address, validate metadata, and encode `register(agentURI)` locally. Use `prepareEvmRegistration()` only when deliberately supplying another independently verified identity registry. Neither function contacts Cheshire, connects a wallet, simulates, or broadcasts.
 
 ```js
-import { prepareCanonicalEvmRegistration } from "@cheshire-terminal/robinhood-agents";
+import { prepareCanonicalEvmRegistration } from "cheshire-terminal-agents";
 
 const intent = prepareCanonicalEvmRegistration({
   chainId: 46630,
@@ -64,7 +64,7 @@ Verify `intent.vm === "evm"`, `intent.canonicalRegistry === true`, chain ID, des
 ## Hosted client
 
 ```js
-import { createAgentForge } from "@cheshire-terminal/robinhood-agents";
+import { createAgentForge } from "cheshire-terminal-agents";
 
 const forge = createAgentForge({ baseUrl: "https://cheshireterminal.ai" });
 const status = await forge.capabilities();
@@ -91,7 +91,7 @@ import {
   assertSponsoredMintAuthorization,
   buildSponsoredMintAuthorization,
   createAgentForge,
-} from "@cheshire-terminal/robinhood-agents";
+} from "cheshire-terminal-agents";
 
 const source = {
   ownerPubkey: "BASE58_OWNER",
@@ -121,17 +121,18 @@ Use the Solana wallet adapter's actual `signMessage` operation for `wallet` abov
 ## CLI
 
 ```bash
-npx robinhood-agents capabilities --site https://cheshireterminal.ai
-npx robinhood-agents deployments --chain 46630
-npx robinhood-agents prepare-local-robinhood --file registration.json --chain 46630
-npx robinhood-agents prepare-robinhood --file registration.json --site https://cheshireterminal.ai
-npx robinhood-agents inspect --platform robinhood --id 1 --chain 46630
+npx cheshire-terminal-agents capabilities --site https://cheshireterminal.ai
+npx cheshire-terminal-agents agents-list
+npx cheshire-terminal-agents deployments --chain 46630
+npx cheshire-terminal-agents prepare-local-robinhood --file registration.json --chain 46630
+npx cheshire-terminal-agents prepare-robinhood --file registration.json --site https://cheshireterminal.ai
+npx cheshire-terminal-agents inspect --platform robinhood --id 1 --chain 46630
 ```
 
 `mint-solana` is a live write and requires both `--confirm-live-mint` and a JSON file containing `ownerPubkey`, `walletMessage`, and `walletSignature`. The CLI sends that signed authorization immediately; it provides no second wallet prompt and does not make a stale authorization safe.
 
 ```bash
-npx robinhood-agents mint-solana \
+npx cheshire-terminal-agents mint-solana \
   --confirm-live-mint \
   --file signed-mint.json \
   --site https://cheshireterminal.ai

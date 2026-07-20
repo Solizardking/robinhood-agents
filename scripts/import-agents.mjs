@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 /**
- * Import character + DeFi agents into robinhood-agents/agents as Cheshire-schema JSON.
- * Also syncs i18n locale overlays from agents/defi-agents/locales.
+ * Import character + DeFi agents into cheshire-terminal-agents catalog (agents/ + locales/).
  *
- * Sources:
+ * Preferred monorepo sources (when present):
  *   - agents/characters/*.json (except package.json)
  *   - agents/defi-agents/src/*.json
  *   - agents/defi-agents/locales/<id>/index*.json
- * Schema:
- *   - agents/defi-agents/schema/Cheshire_agent_schema.json (vendored under schema/)
+ *   - agents/defi-agents/schema/Cheshire_agent_schema.json
+ *
+ * npm script entry points:
+ *   npm run import:agents
+ *   npm run agents:import
  */
 import {
   copyFileSync,
@@ -61,7 +63,7 @@ function listJsonStems(dir, exclude = new Set()) {
 }
 
 /**
- * Mirror agents/defi-agents/locales → robinhood-agents/locales.
+ * Mirror agents/defi-agents/locales → package locales/.
  * Replaces destination tree for a clean sync.
  */
 function importLocales() {
