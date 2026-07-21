@@ -9,6 +9,8 @@
 ```bash
 npm install cheshire-terminal-agents
 npm view cheshire-terminal-agents version
+# or pin the open forge package from GitHub:
+npm install "github:Solizardking/robinhood-agents#v0.1.0"
 ```
 
 From source: clone the repository, run `npm install` and `npm run check`.

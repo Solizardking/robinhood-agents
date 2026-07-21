@@ -38,7 +38,8 @@ Never request, store, print, or transmit a private key or seed phrase. Never sil
 ## Enforce the identity-token boundary
 
 - Robinhood Agent Forge currently registers an identity ERC-721 only. It does not deploy or mint a fungible ERC-20 agent token.
-- Solana identity mint (Metaplex Core + Agent Identity) is separate from fungible agent-token launch. When health reports `mintPolicy.fungibleAgentTokenLaunch === "available"`, wallet-owned agents may call `POST /api/metaplex-agents/launch-token` with a durable idempotency key. Require ownership of the Core asset, review the unsigned tx, and never treat `setToken: true` as reversible.
+- Solana identity mint (Metaplex Core + Agent Identity) is separate from fungible agent-token launch. Default posture for fungible agent-token launch is **production-paused** (`POST /api/metaplex-agents/launch-token` must not be called while paused). When health reports `mintPolicy.fungibleAgentTokenLaunch === "available"`, wallet-owned agents may call that route with a durable idempotency key. Require ownership of the Core asset, review the unsigned tx, and never treat `setToken: true` as reversible.
+- Install or pin the open SDK with `npm install "github:Solizardking/robinhood-agents#v0.1.0"` (or the monorepo `robinhood-agents/` package). Do not invent alternate registry namespaces.
 - Do not describe an identity or token as an investment or promise value, yield, liquidity, or price appreciation.
 
 ## Deploy only for a new namespace

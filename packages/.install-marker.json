@@ -1,15 +1,14 @@
 {
   "ok": true,
   "root": "/Users/8bit/cheshire-terminal/robinhood-agents",
-  "at": "2026-07-20T17:04:06.762Z",
+  "at": "2026-07-21T15:25:52.310Z",
   "packages": [
     {
       "id": "headless-agent",
       "ok": true,
-      "installed": true,
+      "alreadyInstalled": true,
       "name": "@cheshire/headless-agent",
-      "path": "/Users/8bit/cheshire-terminal/robinhood-agents/packages/headless-agent",
-      "hasNodeModules": true
+      "path": "/Users/8bit/cheshire-terminal/robinhood-agents/packages/headless-agent"
     },
     {
       "id": "clawd-agent-tui",
